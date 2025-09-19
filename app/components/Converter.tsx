@@ -26,22 +26,44 @@ export default function Converter() {
     }
   }
 
-  const handleConvert = async () => {
-    if (!originalImage) return
-    
-    setIsProcessing(true)
-    try {
-      const result = await convertImageToPaintByNumbers(originalImage, 12)
-      setProcessedImage(result.imageData)
-      setNumbersImage(result.numbersImage)
-      setColorPalette(result.colorPalette)
-    } catch (error) {
-      console.error('Conversion error:', error)
-      alert('Error processing image. Please try another image.')
-    } finally {
-      setIsProcessing(false)
+ const handleConvert = async () => {
+  if (!originalImage) return
+  
+  setIsProcessing(true);
+  try {
+    // Конвертация base64 в File
+    const response = await fetch(originalImage);
+    const blob = await response.blob();
+    const file = new File([blob], 'image.png', { type: 'image/png' });
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const apiResponse = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!apiResponse.ok) {
+      throw new Error('Server error');
     }
+
+    const result = await apiResponse.json();
+    
+    if (result.success) {
+      setProcessedImage(result.imageData);
+      setNumbersImage(result.numbersImage);
+      setColorPalette(result.colorPalette);
+    } else {
+      throw new Error(result.error);
+    }
+  } catch (error) {
+    console.error('Conversion error:', error);
+    alert('Error processing image. Please try another image.');
+  } finally {
+    setIsProcessing(false);
   }
+};
 
   const downloadImage = (imageData: string, filename: string) => {
     const link = document.createElement('a')
