@@ -27,7 +27,7 @@ export default function Converter() {
   }
 
  const handleConvert = async () => {
-  if (!originalImage) return
+  if (!originalImage) return;
   
   setIsProcessing(true);
   try {
@@ -38,6 +38,8 @@ export default function Converter() {
 
     const formData = new FormData();
     formData.append('image', file);
+    formData.append('colorsCount', '12');
+    formData.append('complexity', '20');
 
     const apiResponse = await fetch('/api/upload', {
       method: 'POST',
@@ -45,21 +47,22 @@ export default function Converter() {
     });
 
     if (!apiResponse.ok) {
-      throw new Error('Server error');
+      const errorData = await apiResponse.json();
+      throw new Error(errorData.error || `Server error: ${apiResponse.status}`);
     }
 
     const result = await apiResponse.json();
     
     if (result.success) {
-      setProcessedImage(result.imageData);
+      setProcessedImage(result.processedImage);
       setNumbersImage(result.numbersImage);
       setColorPalette(result.colorPalette);
     } else {
-      throw new Error(result.error);
+      throw new Error(result.error || 'Conversion failed');
     }
   } catch (error) {
     console.error('Conversion error:', error);
-    alert('Error processing image. Please try another image.');
+    alert(`Ошибка обработки: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`);
   } finally {
     setIsProcessing(false);
   }
