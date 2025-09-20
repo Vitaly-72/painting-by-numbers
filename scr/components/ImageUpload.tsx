@@ -1,7 +1,8 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { ProcessedImage } from '@/types'
+import { processImageClient } from '@/lib/imageProcessor'
 
 interface ImageUploadProps {
   onProcess: (image: ProcessedImage) => void
@@ -11,45 +12,52 @@ interface ImageUploadProps {
 
 export default function ImageUpload({ onProcess, loading, setLoading }: ImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [error, setError] = useState<string>('')
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-  const file = event.target.files?.[0]
-  if (!file) return
+    const file = event.target.files?.[0]
+    if (!file) return
 
-  // Проверка размера файла (макс. 5MB)
-  if (file.size > 5 * 1024 * 1024) {
-    alert('Файл слишком большой. Максимальный размер: 5MB')
-    return
-  }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Файл слишком большой. Максимальный размер: 5MB')
+      return
+    }
 
-  // Проверка типа файла
-  if (!file.type.startsWith('image/')) {
-    alert('Пожалуйста, выберите изображение')
-    return
-  }
+    if (!file.type.startsWith('image/')) {
+      setError('Пожалуйста, выберите изображение')
+      return
+    }
 
+    setError('')
     setLoading(true)
-    
-    const formData = new FormData()
-    formData.append('image', file)
 
     try {
-      const response = await fetch('/api/process-image', {
-        method: 'POST',
-        body: formData,
+      const originalImage = await readFileAsDataURL(file)
+      const processed = await processImageClient(originalImage, 12)
+      
+      onProcess({
+        original: originalImage,
+        processed: processed.imageData,
+        palette: processed.palette,
+        numbers: processed.numbers,
+        width: processed.width,
+        height: processed.height
       })
-
-      if (response.ok) {
-        const result = await response.json()
-        onProcess(result)
-      } else {
-        console.error('Failed to process image')
-      }
     } catch (error) {
       console.error('Error processing image:', error)
+      setError('Ошибка обработки изображения. Попробуйте другое изображение.')
     } finally {
       setLoading(false)
     }
+  }
+
+  const readFileAsDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => resolve(e.target?.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
   }
 
   return (
@@ -74,13 +82,17 @@ export default function ImageUpload({ onProcess, loading, setLoading }: ImageUpl
             disabled={loading}
             className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded disabled:opacity-50"
           >
-            Upload Image
+            {loading ? 'Обработка...' : 'Загрузить изображение'}
           </button>
         </div>
         
         <p className="text-sm text-gray-500">
-          PNG, JPG, GIF up to 10MB
+          PNG, JPG, GIF up to 5MB
         </p>
+
+        {error && (
+          <p className="text-red-500 text-sm">{error}</p>
+        )}
       </div>
     </div>
   )
