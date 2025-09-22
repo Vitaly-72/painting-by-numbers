@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-// ЗАМЕНИТЕ ЭТИ ИМПОРТЫ:
-import ImageUpload from '../src/components/ImageUpload'
-import ColorPalette from '../src/components/ColorPalette'
-import PreviewCanvas from '../src/components/PreviewCanvas'
-import DownloadButtons from '../src/components/DownloadButtons'
+// ИСПРАВЛЕННЫЕ ИМПОРТЫ:
+import ImageUpload from './components/ImageUpload'
+import ColorPalette from './components/ColorPalette'
+import PreviewCanvas from './components/PreviewCanvas'
+import DownloadButtons from './components/DownloadButtons'
 import { ProcessedImage } from '../src/types'
 
 export default function Home() {
