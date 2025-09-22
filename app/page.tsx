@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+// ЗАМЕНИТЕ ЭТИ ИМПОРТЫ:
 import ImageUpload from '../src/components/ImageUpload'
 import ColorPalette from '../src/components/ColorPalette'
 import PreviewCanvas from '../src/components/PreviewCanvas'
 import DownloadButtons from '../src/components/DownloadButtons'
 import { ProcessedImage } from '../src/types'
-
 
 export default function Home() {
   const [processedImage, setProcessedImage] = useState<ProcessedImage | null>(null)
