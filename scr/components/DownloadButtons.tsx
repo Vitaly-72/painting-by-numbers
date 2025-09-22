@@ -1,4 +1,4 @@
-import { ProcessedImage } from '@/types'
+import { ProcessedImage } from '../types'
 
 interface DownloadButtonsProps {
   processedImage: ProcessedImage
