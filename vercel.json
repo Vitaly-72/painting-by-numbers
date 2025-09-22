@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": ".next",
+  "functions": {
+    "app/**/*.ts": {
+      "maxDuration": 30
+    }
+  }
+}
