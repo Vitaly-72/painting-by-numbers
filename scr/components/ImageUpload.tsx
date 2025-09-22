@@ -1,8 +1,8 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { ProcessedImage } from '@/types'
-import { processImageClient } from '@/lib/imageProcessor'
+import { ProcessedImage } from '../types'
+import { processImageClient } from '../lib/imageProcessor'
 
 interface ImageUploadProps {
   onProcess: (image: ProcessedImage) => void
