@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { ProcessedImage } from '@/types'
+import { ProcessedImage } from '../types'
 
 interface PreviewCanvasProps {
   processedImage: ProcessedImage
