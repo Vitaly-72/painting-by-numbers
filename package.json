@@ -2,11 +2,13 @@
   "name": "painting-by-numbers",
   "version": "1.0.0",
   "description": "Create paint by numbers from your images",
+  {
   "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start", 
-  "lint": "next lint"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start", 
+    "lint": "next lint"
+  }
 },
   "dependencies": {
     "next": "^14.0.0",
@@ -27,5 +29,6 @@
     "@types/html2canvas": "^1.0.0"
   }
 }
+
 
 
